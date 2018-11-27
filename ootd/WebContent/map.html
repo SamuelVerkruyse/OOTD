@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+    <style type="text/css">
+	.myButton {
+		-moz-box-shadow:inset 0px 1px 0px 0px #54a3f7;
+		-webkit-box-shadow:inset 0px 1px 0px 0px #54a3f7;
+		box-shadow:inset 0px 1px 0px 0px #54a3f7;
+		background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #007dc1), color-stop(1, #0061a7));
+		background:-moz-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+		background:-webkit-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+		background:-o-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+		background:-ms-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+		background:linear-gradient(to bottom, #007dc1 5%, #0061a7 100%);
+		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#007dc1', endColorstr='#0061a7',GradientType=0);
+		background-color:#007dc1;
+		-moz-border-radius:3px;
+		-webkit-border-radius:3px;
+		border-radius:3px;
+		border:2px solid #124d77;
+		display:inline-block;
+		cursor:pointer;
+		color:#ffffff;
+		font-family:Arial;
+		font-size:28px;
+		font-weight:bold;
+		padding:32px 70px;
+		text-decoration:none;
+		text-shadow:0px 1px 0px #154682;
+	}
+	.myButton:hover {
+		background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0061a7), color-stop(1, #007dc1));
+		background:-moz-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+		background:-webkit-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+		background:-o-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+		background:-ms-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+		background:linear-gradient(to bottom, #0061a7 5%, #007dc1 100%);
+		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#0061a7', endColorstr='#007dc1',GradientType=0);
+		background-color:#0061a7;
+	}
+	.myButton:active {
+		position:relative;
+		top:1px;
+	}
+
+	</style>
+  </head>
+  <body>
+  	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+	  <a class="navbar-brand" href="index.html">Home</a>
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+	    <span class="navbar-toggler-icon"></span>
+	  </button>
+	
+	  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+	    <ul class="navbar-nav mr-auto">
+	      <li class="nav-item">
+	        <a class="nav-link active" href="map.html">Suggested Outfit</a>
+	      </li>
+	      <li class="nav-item">
+	        <a class="nav-link" href="savedoutfits.html">View Saved Outfit</a>
+	      </li>
+	      <li class="nav-item dropdown">
+	        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	          My Closet
+	        </a>
+	        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+	          <a class="dropdown-item" href="pants.html">Pants</a>
+	          <a class="dropdown-item" href="jackets.html">Jackets</a>
+	          <a class="dropdown-item" href="shirts.html">Shirts</a>
+	          <a class="dropdown-item" href="shoes.html">Shoes</a>
+	          <a class="dropdown-item" href="shorts.html">Shorts</a>          
+	        </div>
+	      </li>
+	    </ul>
+	  </div>
+	</nav>
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	  <strong>Welcome to OOTD!</strong> We're a webapp to help organize your closet and get outfit recommendations.
+	  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+	    <span aria-hidden="true">&times;</span>
+	  </button>
+	</div>
+	<form method="post" action="loginServlet">
+  <div class="form-group">
+    <label for="zipInput">Enter your destination</label>
+    <input name="zipInput" class="form-control" id="exampleFormControlInput1" placeholder="93405">
+  	</div>
+  	</form>
+	 <img class="card-img-top" src="WeatherImages/molumen-world-map-1.svg">
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </body>
+</html>

@@ -1,12 +1,13 @@
 package helloworld;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ItemListFactory {
 	public List<Item> getItemList(String itemName){
 		ItemList items = null;
 		if(itemName == null) {
-			return null;
+			 return Collections.emptyList();
 		}
 		if(itemName.equalsIgnoreCase("shirts")) {
 			items = new ShirtList();
@@ -21,13 +22,13 @@ public class ItemListFactory {
 			return items.getList();
 		}
 		if(itemName.equalsIgnoreCase("pants")) {
-			items = new ShortsList();
+			items = new PantsList();
 			return items.getList();
 		}
 		if(itemName.equalsIgnoreCase("shoes")) {
 			items = new ShoesList();
 			return items.getList();
 		}
-		return null;
+		return Collections.emptyList();
 	}
 }

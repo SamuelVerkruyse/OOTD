@@ -8,60 +8,82 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import static tk.plogitech.darksky.forecast.util.Assert.notNull;
-import tk.plogitech.darksky.forecast.util.IOUtil;
-import tk.plogitech.darksky.forecast.APIKey;
-import tk.plogitech.darksky.forecast.DarkSkyClient;
-import tk.plogitech.darksky.forecast.ForecastException;
-import tk.plogitech.darksky.forecast.ForecastRequest;
-import tk.plogitech.darksky.forecast.ForecastRequestBuilder;
-import tk.plogitech.darksky.forecast.GeoCoordinates;
-import tk.plogitech.darksky.forecast.model.Latitude;
-import tk.plogitech.darksky.forecast.model.Longitude;
-import java.net.URLConnection;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
-import javax.xml.xpath.XPathConstants;
-import org.w3c.dom.Document;
-
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 @WebServlet("/showResults")
 public class ShowOutfits extends HttpServlet {
-	
-    protected void doPost(HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException {
-    	String temperature = request.getParameter("tempInput");
-    	String conditions = request.getParameter("weatherInput");
-    	String color = request.getParameter("options");
+	private static final long serialVersionUID = 8468049327108461353L;
+	String jacket = "Jacket";
+	String shirt = "Shirt";
+	String shorts = "Shorts";
+	String pants = "Pants";
+	String shoes = "Shoes";
+	String list = "	      </li>\n";
+	String div = "</div>\n";
+	String labelOpen = "  <label class=\"form-check-label\">";
+	String labelClose = "</label>\n";
+	String empty = "empty";
+	Random generator = new Random();
+	protected Item findClothingItem(String clothingType, String desiredItem, Double temperature) {
     	ItemListFactory factory = new ItemListFactory();
-    	Item shirt = factory.getItemList("Shirts").get(0);
-    	Item pants = factory.getItemList("pants").get(0);
-    	Item shoes = factory.getItemList("shoes").get(0);
+    	Item clothing = null;
+    	for(Item clothingItem : factory.getItemList(clothingType)) {
+			if(clothingItem.location.equals(desiredItem)) {
+				return clothingItem;
+			}
+			while(clothing == null || clothing.minTemp > temperature || clothing.maxTemp < temperature) {
+				clothing = factory.getItemList(clothingType).get(generator.nextInt(factory.getItemList(clothingType).size()));
+			}
+		}
+    	return clothing;
+    }
+	
+	protected String emptyOrExtant(HashMap<String, Item> outfit, String clothingType) {
+		if(outfit.get(clothingType) == null) {
+			return "\"" + "disabled";
+		}
+		return outfit.get(clothingType).location + "\"" + (outfit.containsKey(clothingType) ? "" : "disabled");
+	}
+	
+	protected void doPost(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
+    	String shirtPersist = request.getParameter("shirtInput");
+    	String shoePersist = request.getParameter("shoeInput");
+    	String shortPersist = request.getParameter("shortInput");
+    	String pantPersist = request.getParameter("pantInput");
+    	String jacketPersist = request.getParameter("jacketInput");
+    	Double temperature = Double.parseDouble(request.getParameter("tempInput"));
+
+    	if(temperature < 20.0) {
+    		temperature = 20.0;
+    	}
+    	if(temperature > 100) {
+    		temperature = 100.0;
+    	}
+    	String conditions = request.getParameter("weatherInput");
+    	HashMap<String, Item> outfit = new HashMap<>();
+    	if(temperature < 70.0 && !conditions.contains("clear")) {
+    		outfit.put(jacket, findClothingItem("jackets", jacketPersist, temperature));
+    	}
+		outfit.put(shirt, findClothingItem("shirts", shirtPersist, temperature));
+    	if(temperature > 70.0){
+    		outfit.put(shorts, findClothingItem("shorts", shortPersist, temperature));
+    	}
+    	else {
+    		outfit.put(pants, findClothingItem("pants", pantPersist, temperature));
+    	}
+		outfit.put(shoes, findClothingItem("shoes", shoePersist, temperature));
         // do some processing here...
          
         // get response writer
         PrintWriter writer = response.getWriter();
          
         // build HTML code
-        String htmlRespone = "<html>";
-        htmlRespone += "<head>\n" + 
+        StringBuilder htmlRespone = new StringBuilder();
+        htmlRespone.append("<html>"
+        +"<head>\n" + 
         		"    <!-- Required meta tags -->\n" + 
         		"    <meta charset=\"utf-8\">\n" + 
         		"    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">\n" + 
@@ -82,10 +104,10 @@ public class ShowOutfits extends HttpServlet {
         		"	    <ul class=\"navbar-nav mr-auto\">\n" + 
         		"	      <li class=\"nav-item\">\n" + 
         		"	        <a class=\"nav-link\" href=\"map.html\">Suggested Outfit</a>\n" + 
-        		"	      </li>\n" + 
+        		list + 
         		"	      <li class=\"nav-item\">\n" + 
         		"	        <a class=\"nav-link\" href=\"savedoutfits.html\">View Saved Outfit</a>\n" + 
-        		"	      </li>\n" + 
+        		list + 
         		"	      <li class=\"nav-item dropdown\">\n" + 
         		"	        <a class=\"nav-link dropdown-toggle active\" href=\"#\" id=\"navbarDropdown\" role=\"button\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">\n" + 
         		"	          My Closet\n" + 
@@ -97,34 +119,58 @@ public class ShowOutfits extends HttpServlet {
         		"	          <a class=\"dropdown-item\" href=\"shoes.html\">Shoes</a>\n" + 
         		"	          <a class=\"dropdown-item\" href=\"shorts.html\">Shorts</a>          \n" + 
         		"	        </div>\n" + 
-        		"	      </li>\n" + 
+        		list + 
         		"	    </ul>\n" + 
         		"	  </div>\n" + 
         		"	</nav>" +
         		"    <div class=\"container h-100\">\n" + 
-        		"        <div class=\"row align-items-center h-100 mx-auto mt-5 d-flex align-items-stretch\">";
-		        for (int i = 0; i < 3; i++) {
-		        	htmlRespone += 
-		        			"<div class=\"col-xs-2 mx-auto d-flex align-items-stretch\">\n" + 
-		        			"              <div class=\"card\">\n" + 
-		        			"<img class=\"card-img-top\" src=\""+ shirt.location + "\">\n" +  
-		        			"                <div class=\"card-body d-flex flex-column\">\n" + 
-		        			"                  <h5 class=\"card-title\">" + temperature + "</h5>\n" + 
-		        			"                  <p class=\"card-text\">Discover the beauty of Hearst Castle through exploring each of the three houses</p>\n" + 
-		        			"                  <a href=\"/search?query=house+c\" class=\"btn btn-sm btn-block btn-primary mt-auto\">Explore Casa del Sol Letters</a>\n" + 
-		        			"                </div>\n" + 
-		        			"              </div>\n" + 
-		        			"            </div>";
-				}
-        htmlRespone +=
-        		"    </div>" +
-        		"    <!-- Optional JavaScript -->\n" + 
-        		"    <!-- jQuery first, then Popper.js, then Bootstrap JS -->\n" + 
-        		"    <script src=\"https://code.jquery.com/jquery-3.3.1.slim.min.js\" integrity=\"sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo\" crossorigin=\"anonymous\"></script>\n" + 
-        		"    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js\" integrity=\"sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49\" crossorigin=\"anonymous\"></script>\n" + 
-        		"    <script src=\"https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js\" integrity=\"sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy\" crossorigin=\"anonymous\"></script>\n" + 
-        		"  </body>";
-        htmlRespone += "</html>";
+        		"        <div class=\"row align-items-center\">");
+		        htmlRespone.append(
+			        	"        <div class=\"row card-group align-items-center mx-auto mt-5 d-flex align-items-stretch\">" +
+			        	"<div class=\"card-deck\">\n" +
+			        	"<div class=\"col-xs-2 mx-auto d-flex align-items-stretch\">\n");
+		        for (Map.Entry<String, Item> items : outfit.entrySet()) {
+			        	htmlRespone.append(
+	        			"              <div class=\"card mt-3 h-20\" style=\"width: 10rem;\">\n" + 
+	        			"  <img class=\"card-img-top img-fluid\" src=\"" + items.getValue().location + "\">\n" + 
+	        			"              </div>\n");
+		        	}
+		        	htmlRespone.append(div
+		        	+div
+		        	+div
+		        +div
+		        		+ "<div class=\"row align-items-center mx-auto\">" +
+		        		"<div class=\"container mt-5d-block mx-auto h-100\">\n" + 
+		        		"	<form class=\"form-inline justify-content-center\" method=\"post\" action=\"showResults\">\n" + 
+		        		"   <input type=\"hidden\" name=\"tempInput\" value=\"" + temperature + "\">" +
+		        		"   <input type=\"hidden\" name=\"weatherInput\" value=\"" + conditions + "\">" +
+			        	"<div class=\"form-check form-check-inline mx-auto\">\n" + 
+		        		"   <input class=\"form-check\" type=\"checkbox\" name=\"shirtInput\" value=\"" + emptyOrExtant(outfit, shirt) + ">" +
+		        		labelOpen+ shirt +labelClose + 
+		        		"   <input class=\"form-check\" type=\"checkbox\" name=\"shortInput\" value=\""  + emptyOrExtant(outfit, shorts) + ">" +
+		        		labelOpen+ shorts +labelClose + 
+		        		"   <input class=\"form-check\" type=\"checkbox\" name=\"shoeInput\" value=\""  + emptyOrExtant(outfit, shoes) + ">" +
+		        		labelOpen+ shoes +labelClose + 
+		        		"   <input class=\"form-check\" type=\"checkbox\" name=\"jacketInput\" value=\""  + emptyOrExtant(outfit, jacket) + ">" +
+		        		labelOpen+ jacket +labelClose + 
+		        		"   <input class=\"form-check\" type=\"checkbox\"  name=\"pantInput\" value=\""  + emptyOrExtant(outfit, pants) + ">" +
+		        		labelOpen+ pants +labelClose + 
+		        		div +
+		        		"	<button type=\"submit\" class=\"btn btn-primary mt-5 btn-lg btn-block\">Reroll outfit (Check box to keep items)</a>\n" + 		        		"</form>" +
+		        		"<form method=\"post\" action=\"savedoutfits.html\">" +
+		        		"   <input type=\"hidden\" name=\"inputShorts\" value=\"" + (outfit.containsKey(shorts) ? outfit.get(shorts).location : empty) + "\">" +
+		        		"   <input type=\"hidden\" name=\"inputShoes\" value=\"" + outfit.get(shoes).location + "\">" +
+		        		"   <input type=\"hidden\" name=\"inputJackets\" value=\"" + (outfit.containsKey(jacket) ? outfit.get(jacket).location : empty) + "\">" +
+		        		"   <input type=\"hidden\" name=\"inputPants\" value=\"" + (outfit.containsKey(pants) ? outfit.get(pants).location : empty) + "\">" +
+		        		"   <input type=\"hidden\" name=\"inputShirts\" value=\"" + outfit.get(shirt).location + "\">" +
+		        		"	<button type=\"submit\" class=\"btn btn-primary mt-5 btn-lg btn-block\">Save Outfit</button>\n" + 
+		        		"  <input type=\"text\" name=\"outfitName\" class=\"form-control\" placeholder=\"Type name of outfit\" aria-label=\"\" aria-describedby=\"basic-addon1\">\n" + 
+		        		div + 
+		        		"</form>" +
+		        		div +
+		        		"	</div>");
+		        
+        htmlRespone.append("</html>");
          
         // return response
         writer.println(htmlRespone);

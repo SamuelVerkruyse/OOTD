@@ -1,6 +1,12 @@
 package helloworld;
 
-public class Item{
+import java.io.Serializable;
+
+public class Item implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public int minTemp;
 	public int maxTemp;
 	public String color;

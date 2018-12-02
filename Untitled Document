@@ -1,0 +1,5 @@
+mvn sonar:sonar \
+  -Dsonar.projectKey=SamuelVerkruyse_OOTD \
+  -Dsonar.organization=samuelverkruyse-github \
+  -Dsonar.host.url=https://sonarcloud.io \
+  -Dsonar.login=534355ac4b0a12c88961480db3876690ac0921ff

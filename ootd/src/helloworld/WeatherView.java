@@ -41,12 +41,12 @@ import org.xml.sax.SAXException;
 
 
 @WebServlet("/loginServlet")
-public class weatherView extends HttpServlet {
+public class WeatherView extends HttpServlet {
 	private static final long serialVersionUID = -193899611039436032L;
 	String regexAssist = "(.*?)";
 	String list = "	      </li>\n";
 	String labels = "  </label>\n";
-	private static final Logger LOGGER = Logger.getLogger( weatherView.class.getName() );
+	private static final Logger LOGGER = Logger.getLogger( WeatherView.class.getName() );
 	public static String[] getLatLongPositions(String address) throws IOException, ParserConfigurationException, XPathExpressionException, SAXException
 	{
 	    int responseCode = 0;
@@ -79,8 +79,9 @@ public class weatherView extends HttpServlet {
 	    return new String[] {};
 	  }
 	
-    protected void doPost(HttpServletRequest request,
+    public void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
+    	response.setContentType("text/html");
     	String username = request.getParameter("zipInput");
     	String[] latLongs = null;
     	ForecastRequest weather = null;

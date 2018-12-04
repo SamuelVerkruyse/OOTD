@@ -72,7 +72,7 @@ public class SavedOutfits {
 	}
 	
 	public void addOutfit(Map<String, Item> newOutfit, String name){
-		if(outfits != null) {
+		if(outfits != null && newOutfit != null) {
 			ArrayList<Item> newArray = new ArrayList<>();
 	        for (Map.Entry<String, Item> item : newOutfit.entrySet()) {
 	        	newArray.add(item.getValue());
@@ -83,7 +83,6 @@ public class SavedOutfits {
 	        // Serialization  
 	        try(FileOutputStream file = new FileOutputStream(outfitFile)){
 	            try(ObjectOutputStream out = new ObjectOutputStream(file)){ 
-	              
 	            // Method for serialization of object 
 	            out.writeObject(outfits);
 	            }

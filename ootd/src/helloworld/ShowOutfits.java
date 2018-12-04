@@ -47,7 +47,7 @@ public class ShowOutfits extends HttpServlet {
 		return outfit.get(clothingType).location + "\"" + (outfit.containsKey(clothingType) ? "" : "disabled");
 	}
 	
-	protected void doPost(HttpServletRequest request,
+	public void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
     	String shirtPersist = request.getParameter("shirtInput");
     	String shoePersist = request.getParameter("shoeInput");

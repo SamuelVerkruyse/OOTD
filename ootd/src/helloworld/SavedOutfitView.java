@@ -30,7 +30,7 @@ public class SavedOutfitView extends HttpServlet {
     	return null;
     }
     
-    protected void doGet(HttpServletRequest request,
+    public void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
  
         // do some processing here...
@@ -131,7 +131,7 @@ public class SavedOutfitView extends HttpServlet {
          
     }
  
-    protected void doPost(HttpServletRequest request,
+    public void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
     	Item shirts = null;
     	Item pants = null; 
